@@ -1,0 +1,45 @@
+[
+   { "id": 1 ,
+     "nombre":"God of War Ragnarok",
+     "genero":"accion y aventura",
+     "consola":"Playstation",
+     "precio":20000,
+     "imagen":"god_ of_ war_ragnarok.jpg"},
+
+   {"id": 2 ,
+    "nombre":"Uncharted 4",
+     "genero":"accion y aventura", 
+     "consola":"Playstation", 
+     "precio":10000,
+     "imagen":"uncharted-4.jpg"},
+
+   {"id": 3, 
+   "nombre":"Spider-man", 
+   "genero":"accion y aventura", 
+   "consola":"Playstation", 
+   "precio":15000,
+   "imagen":"spider-man.jpg"},
+
+   {"id": 4, 
+   "nombre":"Gears of War 5",
+    "genero":"accion", 
+    "consola":"Xbox", 
+    "precio":8000,
+    "imagen":"gears-of-war-5.jpg"},
+
+   {"id": 5 , 
+   "nombre":"Halo Infinite", 
+   "genero":"fps", 
+   "consola":"Xbox", 
+   "precio":8500,
+   "imagen":"halo_infinite.jpg"},
+
+   {"id": 6,
+    "nombre":"Forza Horizon 5", 
+    "genero":"conduccion", 
+    "consola":"Xbox", 
+    "precio":15000,
+    "imagen":"forzaHorizon5.jpg"}
+
+
+]

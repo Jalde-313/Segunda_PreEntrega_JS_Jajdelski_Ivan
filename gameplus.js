@@ -1,6 +1,14 @@
 // PROYECTO E-COMMERCER DE VIDEOSJUEGOS
 //CLASS CONTRUCTORA
 
+const DateTime = luxon.DateTime
+let fecha = document.getElementById("fecha")
+setInterval(()=>{
+   let fechaMostrar =  DateTime.now().toLocaleString(DateTime.TIME_24_WITH_SECONDS)
+   fecha.innerHTML = `<p>${fechaMostrar}</p>`
+
+},1000)
+
 class Game {
   constructor(id, nombre, genero, consola, precio,imagen){
       this.id = id,
@@ -10,31 +18,31 @@ class Game {
       this.precio = precio,
       this.imagen = imagen
   }
-  mostrarInfoGame (){
-      console.log(`este juegos se llama ${this.nombre} su genero es ${this.genero} se encuentra disponible para la consola ${this.consola} a un precio de ${this.precio}`)
-      
-  }
 }
 
-//INSTANCIACION DE OBJETOS
 
-const game1 = new Game (1,"God of War Ragnarok","accion y aventura","Playstation",20000,"god_ of_ war_ragnarok.jpg")
-const game2 = new Game (2,"Uncharted 4","accion y aventura","Playstation",10000,"uncharted-4.jpg")
-const game3 = new Game (3,"Spider-man","accion y aventura","Playstation",15000,"spider-man.jpg")
-const game4 = new Game (4,"Gears of War 5 ","accion","Xbox",8000,"gears-of-war-5.jpg")
-const game5 = new Game (5,"Halo Infinite","fps","Xbox",8500,"halo_infinite.jpg")
-const game6 = new Game (6,"Forza Horizon 5","conduccion","Xbox",15000,"forzaHorizon5.jpg")
+const cargarJuegos = async () =>{
+   const res = await fetch("juegos.json")
+   const data = await res.json()
+   
+   for(let game of data){
+       let gameData = new Game(game.id, game.nombre, game.genero, game.consola, game.precio, game.imagen)
+       allGame.push(gameData)
+       
+   }
+   localStorage.setItem("allGame", JSON.stringify(allGame))
+}
 
+let allGame = [] 
+ 
+if(localStorage.getItem("allGame")){
 
-//ARRAY DE OBJETOS
-const allGame = []
-allGame.push(game1, game2, game3, game4, game5, game6)
-
-const playGame = []
-playGame.push(game1,game2,game3)
-
-const xboxGame = []
-xboxGame.push(game4,game5,game6)
+    allGame = JSON.parse(localStorage.getItem("allGame"))
+}else{
+   //  console.log(`ENTRA POR PRIMERA VEZ. SETEAMOS ARRAY`)
+    cargarJuegos()
+   
+}
 
 //capturas DOM
 let coincidencia = document.getElementById("coincidencia")
@@ -46,36 +54,7 @@ let precioTotal = document.getElementById("precioTotal")
 let ocultarCatalogo = document.getElementById("ocultarCatalogo")
 let juegoPlay= document.getElementById("juegosPlay")
 let xboxjuegos = document.getElementById("juegosXbox")
-
-//Funcion para mostrar catalogo
-
-function mostrarCatalogo(array){
-  juegosDiv.innerHTML = ``
-  for(let juegos of array ){
-     let nuevojuegoDiv = document.createElement("div")
-     nuevojuegoDiv.className = "col-12 col-md-6 col-lg-4 my-2"
-     nuevojuegoDiv.innerHTML = `<div id="${juegos.id}" class="card" style="width: 15rem;">
-                                <img class="card-img-top img-fluid" style="height:400px width:600px"src="assets/${juegos.imagen}" alt="${juegos.titulo} de ${juegos.genero}">
-                                <div class="card-body">
-                                   <h6 class="card-title">${juegos.nombre}</h6>
-                                   <h4 class="card-title">${juegos.consola}</h4>
-                                     <p class="">Precio: $${juegos.precio}</p>
-                                     <button id="agregarBtn${juegos.id}" class="btn btn-outline-primary">Agregar al carrito</button>
-                                </div>
-                             </div>`
-     juegosDiv.appendChild(nuevojuegoDiv)
-  
-  let agregarBtn = document.getElementById(`agregarBtn${juegos.id}`)
-
-  agregarBtn.addEventListener("click", () => {
-     agregarAlCarrito(juegos)
-  })
-}
-}
-
-ocultarCatalogo.addEventListener("click",  () => {
-  juegosDiv.innerHTML = ``
-})
+let botonFinalizarCompra = document.getElementById("botonFinalizarCompra")
 
 
 
@@ -87,7 +66,7 @@ function buscarJuego(buscado, array){
      (dato) => dato.nombre.toLowerCase().includes(buscado.toLowerCase())  || dato.consola.toLowerCase().includes(buscado.toLowerCase()) 
   )
   busqueda.length == 0 ? 
-  (coincidencia.innerHTML = `<h3>No hay coincidencias con la búsqueda ${buscado}</h3>`,
+  (coincidencia.innerHTML = `<h3>No hay coincidencias con la búsqueda "${buscado}"</h3>`,
   mostrarCatalogo(busqueda)) :
   (coincidencia.innerHTML = "", mostrarCatalogo(busqueda)) 
 
@@ -113,9 +92,10 @@ localStorage.setItem("carrito", productosEnCarrito)
         title: `Ha agregado un producto al carrito`,
         text:`El juego ${game.nombre} de ${game.consola} ha sido agregado`,
         confirmButtonColor: "blue",
-        confirmButtonText : "Gracias",
+        confirmButtonText : "Ok",
         imageUrl: `assets/${game.imagen}`,
-        imageHeight: 200
+        imageHeight: 200,
+        timer:3500
 
      })
   }else{
@@ -154,10 +134,9 @@ function cargarProductosCarrito(array){
        console.log(posicion)
        array.splice(posicion,1)
        console.log(array)
-       localStorage.setItem("carrito", JSON.stringify(array))})
-
-    
-  
+       localStorage.setItem("carrito", JSON.stringify(array))
+      calcularTotal(array)
+      })
   })
   calcularTotal(array)}
 
@@ -165,27 +144,105 @@ function cargarProductosCarrito(array){
 
     let total = array.reduce((acc, productoCarrito)=> acc + productoCarrito.precio , 0)
     total == 0 ? precioTotal.innerHTML= `No hay productos en el carrito` : precioTotal.innerHTML = `El total es $<strong>${total}</strong>`
+    return total
  
  }
 
 
-///eventos
-buscador.addEventListener("input", () => { buscarJuego(buscador.value, allGame)
+//Funcion para mostrar catalogo
+
+function mostrarCatalogo(array, propiedadFiltro, valorFiltro) {
+   juegosDiv.innerHTML = '';
+ 
+   for (let juego of array) {
+     if (juego[propiedadFiltro] === valorFiltro) {
+       let nuevojuegoDiv = document.createElement('div')
+       nuevojuegoDiv.className = "col-12 col-md-6 col-lg-4 my-2"
+       nuevojuegoDiv.innerHTML = `
+         <div id="${juego.id}" class="card" style="width: 15rem;">
+           <img class="card-img-top img-fluid" style="height:400px width:600px;" src="assets/${juego.imagen}" alt="${juego.titulo} de ${juego.genero}">
+           <div class="card-body">
+             <h6 class="card-title">${juego.nombre}</h6>
+             <h4 class="card-title">${juego.consola}</h4>
+             <p class="">Precio: $${juego.precio}</p>
+             <button id="agregarBtn${juego.id}" class="btn btn-outline-primary">Agregar al carrito</button>
+           </div>
+         </div>`;
+ 
+       juegosDiv.appendChild(nuevojuegoDiv);
+ 
+       let agregarBtn = document.getElementById(`agregarBtn${juego.id}`);
+ 
+       agregarBtn.addEventListener('click', () => {
+         agregarAlCarrito(juego);
+       })
+     }
+   }
+ }
+
+
+ function finalizarCompra(array){
+   Swal.fire({
+      title: '¿Está seguro de querer realizar la compra?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Sí',
+      cancelButtonText: 'No',
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+  }).then((result) => {
+      if(result.isConfirmed){
+         let totalFinal = calcularTotal(array)
+         Swal.fire({
+            title: 'Compra realizada',
+            icon: 'success',
+            confirmButtonColor: 'green',
+            text: `Muchas gracias por su compra. Debe abonar $${totalFinal} `,
+            })
+
+         productosEnCarrito = []
+         localStorage.removeItem("carrito")
+      }else{
+         Swal.fire({
+            title: 'Compra no realizada',
+            icon: 'info',
+            text: `La compra no ha sido realizada. Atención sus productos siguen en el carrito.`,
+            confirmButtonColor: 'green',
+            timer:3500
+        })
+      }
+  } )
+} 
+
+
+botonFinalizarCompra.addEventListener("click", () =>{
+   finalizarCompra(productosEnCarrito)
 })
 
+
+
+///eventos
+
+mostrarCatalogo(allGame, "consola","Xbox");
+let verCataXbox = document.getElementById("allCatalogo")
+xboxjuegos.addEventListener("click",()=> {
+   mostrarCatalogo(allGame,"consola","Xbox")})
+
+ mostrarCatalogo(allGame, "consola", "PlayStation");
 let verCatalogoPlay = document.getElementById("allCatalogo")
 juegoPlay.addEventListener("click", ()=>{
-   mostrarCatalogo(playGame)
-})
+   mostrarCatalogo(allGame,"consola","Playstation")})
 
-let verCataXbox = document.getElementById("allCatalogo")
-juegosXbox.addEventListener("click",()=> {mostrarCatalogo(xboxGame)})
-
-let verCatalogo = document.getElementById("allCatalogo")
+ let verCatalogo = document.getElementById("allCatalogo")
 verCatalogo.addEventListener("click", ()=>{
-   mostrarCatalogo(allGame)
-})
+   mostrarCatalogo(allGame)})
 
- botonCarrito.addEventListener("click", () => {
-  cargarProductosCarrito(productosEnCarrito)
-})
+ocultarCatalogo.addEventListener("click",  () => {
+   juegosDiv.innerHTML = ``})
+
+botonCarrito.addEventListener("click", () => {
+  cargarProductosCarrito(productosEnCarrito)})
+
+buscador.addEventListener("input", () => { buscarJuego(buscador.value, allGame)})
+
+

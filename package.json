@@ -1,0 +1,24 @@
+{
+  "name": "js",
+  "version": "1.0.0",
+  "description": "Trabajo Final JS CoderHouse",
+  "main": "gameplus.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jalde-313/Tercera_PreEntrega_JS_Jajdelski_Ivan.git"
+  },
+  "author": "JALDE",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jalde-313/Tercera_PreEntrega_JS_Jajdelski_Ivan/issues"
+  },
+  "homepage": "https://github.com/Jalde-313/Tercera_PreEntrega_JS_Jajdelski_Ivan#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.0",
+    "luxon": "^3.3.0",
+    "sweetalert": "^2.1.2"
+  }
+}
