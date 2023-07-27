@@ -39,7 +39,12 @@
     "genero":"conduccion", 
     "consola":"Xbox", 
     "precio":15000,
-    "imagen":"forzaHorizon5.jpg"}
+    "imagen":"forzaHorizon5.jpg"},
 
-
+    {"id": 7,
+    "nombre":"Ghost of tsushima", 
+    "genero":"accion y aventura", 
+    "consola":"Playstation", 
+    "precio":25000,
+    "imagen":"ghost-of-tsushima1.jpg"}
 ]

@@ -39,7 +39,7 @@ if(localStorage.getItem("allGame")){
 
     allGame = JSON.parse(localStorage.getItem("allGame"))
 }else{
-   //  console.log(`ENTRA POR PRIMERA VEZ. SETEAMOS ARRAY`)
+ 
     cargarJuegos()
    
 }
@@ -112,15 +112,15 @@ localStorage.setItem("carrito", productosEnCarrito)
 function cargarProductosCarrito(array){
   modalBodyCarrito.innerHTML = ``
   array.forEach((productoCarrito)=>{
-     modalBodyCarrito.innerHTML += `                                                                                     <div class="card border-primary mb-3" id ="productoCarrito${productoCarrito.id}" style="width: 15rem;">
-                <img class="card-img-top" style="height:400px width:600px" src="assets/${productoCarrito.imagen}" alt="">
+     modalBodyCarrito.innerHTML += `<div class="row justify-content-center">                                                                                                  <div class="card border mb-3" id ="productoCarrito${productoCarrito.id}" style= "width: 20rem">
+                <img class="card-img-top img-fluid" style="height:400px width:600px" src="assets/${productoCarrito.imagen}" alt="">
                 <div class="card-body">
                        <h4 class="card-title">${productoCarrito.nombre}</h4>
                        <p class="card-text">${productoCarrito.consola}</p>
                         <p class="card-text">$${productoCarrito.precio}</p> 
                         <button class= "btn btn-danger" id="botonEliminar${productoCarrito.id}"><i class="fas fa-trash-alt"></i></button>
                 </div>    
-           </div>`
+           </div> </div>`
   })
 
   array.forEach((productoCarrito) => {
@@ -180,6 +180,7 @@ function mostrarCatalogo(array, propiedadFiltro, valorFiltro) {
    }
  }
 
+// funcion finalizar compra
 
  function finalizarCompra(array){
    Swal.fire({

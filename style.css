@@ -1,2 +1,11 @@
-body{background-color: blue;}
-.coin{text-align: center; color: aliceblue;}
+
+/* .coin{text-align: center; color: aliceblue;} */
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('./assets/WhatsApp\ Image\ 2023-07-26\ at\ 08.43.10.jpeg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
